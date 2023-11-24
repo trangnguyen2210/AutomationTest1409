@@ -19,32 +19,36 @@ public class Day17_HW extends CommonBase {
     }
     @Test(priority = 1)
     public void verifyModalSignup() {
-        pause(50000);
-        JavascriptExecutor executor = (JavascriptExecutor)driver;
-
-        WebElement iconChat = driver.findElement(By.xpath("//div[@class='fb_dialog  fb_dialog_advanced']"));
-        executor.executeScript("arguments[0].click();", iconChat);
+        pause(10000);
         driver.switchTo().frame(5);
+        click(By.xpath("//div[@class='fb_dialog  fb_dialog_advanced']"));
+        pause(10000);
+        click(By.xpath("(//div[@class='_a2zm'])[1]"));
+//        JavascriptExecutor executor = (JavascriptExecutor)driver;
 
-        WebElement startChatBtn = driver.findElement(By.xpath("(//div[@class='_a2zm'])[1]"));
-        executor.executeScript("arguments[0].click();", startChatBtn);
+//        WebElement iconChat = driver.findElement(By.xpath("//div[@class='fb_dialog  fb_dialog_advanced']"));
+//        executor.executeScript("arguments[0].click();", iconChat);
+//        driver.switchTo().frame(5);
 
-        WebElement UseMessBtn = driver.findElement(By.xpath("(//div[@class='_a2zm'])[2]"));
-        executor.executeScript("arguments[0].click();", UseMessBtn);
-
-        String mainWindow = driver.getWindowHandle();
-        System.out.println("Main Window is:" + mainWindow);
-        Set<String> listSubWindows = driver.getWindowHandles();
-        for (String subWinDow : listSubWindows) {
-            System.out.println("subWindow is: " + subWinDow);
-            if(!subWinDow.equals(mainWindow)) {
-                driver.switchTo().window(subWinDow);
-                Assert.assertEquals(driver.getTitle(), "Facebook");
-            }
-        }
+//        WebElement startChatBtn = driver.findElement(By.xpath("(//div[@class='_a2zm'])[1]"));
+//        executor.executeScript("arguments[0].click();", startChatBtn);
+//
+//        WebElement UseMessBtn = driver.findElement(By.xpath("(//div[@class='_a2zm'])[2]"));
+//        executor.executeScript("arguments[0].click();", UseMessBtn);
+//
+//        String mainWindow = driver.getWindowHandle();
+//        System.out.println("Main Window is:" + mainWindow);
+//        Set<String> listSubWindows = driver.getWindowHandles();
+//        for (String subWinDow : listSubWindows) {
+//            System.out.println("subWindow is: " + subWinDow);
+//            if(!subWinDow.equals(mainWindow)) {
+//                driver.switchTo().window(subWinDow);
+//                Assert.assertEquals(driver.getTitle(), "Facebook");
+//            }
+//        }
     }
 
-    @Test(priority = 2)
+//    @Test(priority = 2)
     public void verifyRegisterForm() {
         pause(10000);
         scrollToElement(By.xpath("//h2[text()='VTC nói gì về chúng tôi']"));

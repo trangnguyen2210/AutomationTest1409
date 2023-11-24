@@ -2,13 +2,7 @@ package automation.common;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-import org.openqa.selenium.NoAlertPresentException;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxBinary;
@@ -34,7 +28,7 @@ public class CommonBase {
 
 	/**
 	 * init Driver
-	 * 
+	 *
 	 * @param URL
 	 */
 	public WebDriver initDriverTest(String... URL) {
@@ -52,7 +46,7 @@ public class CommonBase {
 		ChromeOptions options = new ChromeOptions();
 		if ("chrome".equals(browser)) {
 			System.setProperty("webdriver.chrome.driver",
-			System.getProperty("user.dir") + "\\driver\\chromedriver.exe");		
+			System.getProperty("user.dir") + "\\driver\\chromedriver119.exe");
 			dr = new ChromeDriver();
 		} else if ("iexplorer".equals(browser)) {
 			dr = new InternetExplorerDriver();
@@ -83,17 +77,17 @@ public class CommonBase {
 	{
 		ChromeOptions options = new ChromeOptions();
 		System.setProperty("webdriver.chrome.driver",
-		System.getProperty("user.dir") + "\\driver\\chromedriver.exe");		
+		System.getProperty("user.dir") + "\\driver\\chromedriver119.exe");
 		driver = new ChromeDriver(options);
 		driver.manage().window().maximize();
 		driver.get(URL);
-		driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+		driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
 		return driver;
 	}
-	
+
 	/**
 	 * pause driver in timeInMillis
-	 * 
+	 *
 	 * @param timeInMillis
 	 */
 	public void pause(long timeInMillis) {
@@ -106,7 +100,7 @@ public class CommonBase {
 
 	/**
 	 * click on an element */
-	
+
 	public void click(Object locator) {
 		By xPath = locator instanceof By ? (By) locator : By.xpath(locator.toString());
 		WebDriverWait wait = new WebDriverWait(driver, 10);
@@ -114,9 +108,9 @@ public class CommonBase {
 				.elementToBeClickable(xPath));
 		elementClick.click();
 	}
-	
+
 	/** get absolute path of file
-	 * 
+	 *
 	 * @param relativeFilePath
 	 * @return
 	 */
@@ -126,9 +120,9 @@ public class CommonBase {
 		return absolutePath;
 	}
 
-	
+
 	/**
-	 * 
+	 *
 	 * @param locator
 	 * @param opParams
 	 */
@@ -146,7 +140,7 @@ public class CommonBase {
 
 	/**
 	 * quit driver if driver existed
-	 * 
+	 *
 	 * @param dr
 	 */
 	public void quitDriver(WebDriver dr) {
@@ -160,7 +154,7 @@ public class CommonBase {
 
 	/**
 	 * switch to a frame
-	 * 
+	 *
 	 * @param locator
 	 * @param opParams
 	 */
@@ -200,7 +194,7 @@ public class CommonBase {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param locator
 	 * @param opParams
 	 */
@@ -212,7 +206,7 @@ public class CommonBase {
 
 	/**
 	 * check field is null = ""
-	 * 
+	 *
 	 * @param s
 	 */
 	public void verifyNull(String s) {
@@ -223,7 +217,7 @@ public class CommonBase {
 
 	/**
 	 * tra ve so lan xuat hien cua 1 xau trong chuoi
-	 * 
+	 *
 	 * @param value
 	 * @param array
 	 * @return
@@ -245,7 +239,7 @@ public class CommonBase {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param string
 	 * @param split
 	 * @return
@@ -259,5 +253,59 @@ public class CommonBase {
 		}
 		return a;
 	}
+
+	public int initWaitTime = 30;
+
+	public void inputTextJavaScriptInnerHTML(By inputElement, String companyName) {
+		WebElement element = driver.findElement(inputElement);
+		try {
+			((JavascriptExecutor) driver).executeScript("arguments[0].innerHTML = '" + companyName + "'", element);
+		} catch (StaleElementReferenceException ex) {
+			pause(1000);
+			inputTextJavaScriptInnerHTML(inputElement, companyName);
+		}
+	}
+
+	public void inputTextJavaScriptValue(By locator, String value) {
+		WebElement element = getElementPresentDOM(locator);
+		try {
+			((JavascriptExecutor) driver).executeScript("arguments[0].value = '" + value + "'", element);
+		} catch (StaleElementReferenceException ex) {
+			pause(1000);
+			inputTextJavaScriptValue(locator, value);
+		}
+	}
+
+	public void scrollToElement(By locator) {
+		WebElement element = getElementPresentDOM(locator);
+		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+	}
+
+	public WebElement getElementPresentDOM(By locator)
+	{
+		WebDriverWait wait = new WebDriverWait(driver, initWaitTime);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+		return driver.findElement(locator);
+	}
+
+	public boolean isElementPresent(By locator)
+	{
+		WebDriverWait wait = new WebDriverWait(driver, initWaitTime);
+		wait.until(ExpectedConditions.visibilityOf(getElementPresentDOM(locator)));
+		return getElementPresentDOM(locator).isDisplayed();
+	}
+	public void click(By locator)
+	{
+		WebElement element = getElementPresentDOM(locator);
+		WebDriverWait wait = new WebDriverWait(driver, initWaitTime);
+		wait.until(ExpectedConditions.elementToBeClickable(locator));
+		element.click();
+	}
+	public void type(By locator, String value)
+	{
+		WebElement element = getElementPresentDOM(locator);
+		element.sendKeys(value);
+	}
+
 
 }
